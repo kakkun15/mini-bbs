@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta chrset="UTF-8">
+        <title>mini-bbs</title>
+    </head>
+    <body>
+        <h1>mini-bbs</h1>
+        <div id="posts">読み込み中...</div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://fsqjvkioezkmuqdkwanc.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_btzugTUyf68eLF2-Ws3SAQ_bLRvveGe";
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        async function loadPosts(){
+            const { data, error } = await db
+            .from("posts")
+            .select("*")
+            .order("created_at", { ascending: false});
+            
+            const area = document.getElementById("posts");
+
+            if(error)
+                {
+                    area.textContent = "エラー：" + error.message;
+                    return;
+                }
+            if(data.length === 0)
+                 {
+                    area.textContent = "まだ投稿がありません";
+                    return;
+                }
+                
+            area.textContent = "";
+            for (const post of data)
+                {
+                    const p = document.createElement("p");
+                    p.textContent = post.body;
+                    area.appendChild(p);
+                    }
+                }
+            
+            loadPosts();
+        </script>
+    </body>
+            
+</html>
